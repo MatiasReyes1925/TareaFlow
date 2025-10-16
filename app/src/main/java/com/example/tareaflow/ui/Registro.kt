@@ -11,9 +11,12 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.tareaflow.R
+
 
 @Composable
 fun Registro(navController: NavController) {
@@ -21,6 +24,7 @@ fun Registro(navController: NavController) {
     var correo by remember { mutableStateOf("") }
     var contraseña by remember { mutableStateOf("") }
     var confirmar by remember { mutableStateOf("") }
+    var abrirModal by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -28,12 +32,11 @@ fun Registro(navController: NavController) {
             .padding(horizontal = 24.dp, vertical = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // 🔝 Logo arriba
         Image(
             painter = painterResource(id = R.drawable.logousuario),
             contentDescription = "Logo de registro",
             modifier = Modifier
-                .size(180.dp)
+                .size(150.dp)
                 .padding(top = 16.dp)
         )
 
@@ -93,7 +96,7 @@ fun Registro(navController: NavController) {
 
         Button(
             onClick = {
-                println("Nombre: $nombre\nCorreo: $correo\nContraseña: $contraseña\nConfirmación: $confirmar")
+                abrirModal = true
             },
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -103,5 +106,18 @@ fun Registro(navController: NavController) {
         TextButton(onClick = { navController.navigate("pantallaPrincipal") }) {
             Text("Volver")
         }
+    }
+
+    if (abrirModal) {
+        AlertDialog(
+            onDismissRequest = { abrirModal = false },
+            title = { Text("Confirmación registro") },
+            text = { Text("¡¡Registro exitoso!!", fontSize = 15.sp) },
+            confirmButton = {
+                Button(onClick = { abrirModal = false }) {
+                    Text("OK")
+                }
+            }
+        )
     }
 }

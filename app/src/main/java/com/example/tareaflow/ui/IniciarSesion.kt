@@ -25,12 +25,11 @@ fun IniciarSesion(navController: NavController) {
             .padding(horizontal = 24.dp, vertical = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // 🔝 Logo arriba
         Image(
             painter = painterResource(id = R.drawable.logousuario),
             contentDescription = "Logo de la app",
             modifier = Modifier
-                .size(180.dp)
+                .size(150.dp)
                 .padding(top = 16.dp)
         )
 
@@ -67,6 +66,7 @@ fun IniciarSesion(navController: NavController) {
         Button(
             onClick = {
                 println("Usuario: $usuario, Contraseña: $contraseña")
+                navController.navigate("pantallaInicio")
             },
             modifier = Modifier.fillMaxWidth()
         ) {

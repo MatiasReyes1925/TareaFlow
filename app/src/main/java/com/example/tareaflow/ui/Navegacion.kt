@@ -13,6 +13,8 @@ fun Navegacion() {
         composable("pantallaPrincipal") { PantallaPrincipal(navController) }
         composable("iniciarSesion") { IniciarSesion(navController) }
         composable("registro") { Registro(navController) }
-
+        composable("pantallaInicio") { PantallaInicio(navController) }
+        composable("agregarTarea") { AgregarTarea(navController) }
+        composable("editarTarea") { EditarTarea(navController) }
     }
 }

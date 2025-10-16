@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -29,7 +30,15 @@ fun PantallaPrincipal(navController: NavController) {
             modifier = Modifier.size(400.dp)
         )
 
-        Spacer(modifier = Modifier.height(80.dp))
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Text(
+            text = "Bienvenidos a TareaFlow",
+            fontSize = 40.sp,
+            fontFamily = FontFamily.Cursive
+        )
+
+        Spacer(modifier = Modifier.height(30.dp))
 
         Button(
             onClick = { navController.navigate("iniciarSesion") },
@@ -39,8 +48,6 @@ fun PantallaPrincipal(navController: NavController) {
         ) {
             Text("Iniciar Sesión", fontSize = 18.sp)
         }
-
-        Spacer(modifier = Modifier.height(8.dp))
 
         Row(
             verticalAlignment = Alignment.CenterVertically,
