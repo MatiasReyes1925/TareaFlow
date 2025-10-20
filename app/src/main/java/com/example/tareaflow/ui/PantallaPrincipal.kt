@@ -2,8 +2,11 @@ package com.example.tareaflow.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -37,8 +40,7 @@ fun PantallaPrincipal(navController: NavController) {
             fontSize = 40.sp,
             fontFamily = FontFamily.Cursive
         )
-
-        Spacer(modifier = Modifier.height(30.dp))
+        Spacer(modifier = Modifier.height(20.dp))
 
         Button(
             onClick = { navController.navigate("iniciarSesion") },
@@ -48,7 +50,6 @@ fun PantallaPrincipal(navController: NavController) {
         ) {
             Text("Iniciar Sesión", fontSize = 18.sp)
         }
-
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,

@@ -1,6 +1,7 @@
 package com.example.tareaflow.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
@@ -10,21 +11,24 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.tareaflow.R
-
+import com.example.tareaflow.viewmodel.UsuarioViewModel
 
 @Composable
-fun Registro(navController: NavController) {
+fun Registro(navController: NavController, usuarioViewModel: UsuarioViewModel) {
     var nombre by remember { mutableStateOf("") }
     var correo by remember { mutableStateOf("") }
     var contraseña by remember { mutableStateOf("") }
     var confirmar by remember { mutableStateOf("") }
     var abrirModal by remember { mutableStateOf(false) }
+    var error by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -49,11 +53,12 @@ fun Registro(navController: NavController) {
         OutlinedTextField(
             value = nombre,
             onValueChange = { nombre = it },
-            label = { Text("Nombre completo") },
-            leadingIcon = {
-                Icon(imageVector = Icons.Filled.Person, contentDescription = "Ícono de nombre")
-            },
-            modifier = Modifier.fillMaxWidth()
+            label = { Text("Nombre completo", color = Color.Black) },
+            leadingIcon = { Icon(Icons.Filled.Person, contentDescription = null, tint = Color.Black) },
+            textStyle = TextStyle(fontSize = 16.sp, color = Color.Black),
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.Transparent)
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -61,11 +66,12 @@ fun Registro(navController: NavController) {
         OutlinedTextField(
             value = correo,
             onValueChange = { correo = it },
-            label = { Text("Correo electrónico") },
-            leadingIcon = {
-                Icon(imageVector = Icons.Filled.Email, contentDescription = "Ícono de correo")
-            },
-            modifier = Modifier.fillMaxWidth()
+            label = { Text("Correo electrónico", color = Color.Black) },
+            leadingIcon = { Icon(Icons.Filled.Email, contentDescription = null, tint = Color.Black) },
+            textStyle = TextStyle(fontSize = 16.sp, color = Color.Black),
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.Transparent)
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -73,11 +79,13 @@ fun Registro(navController: NavController) {
         OutlinedTextField(
             value = contraseña,
             onValueChange = { contraseña = it },
-            label = { Text("Contraseña") },
-            leadingIcon = {
-                Icon(imageVector = Icons.Filled.Lock, contentDescription = "Ícono de contraseña")
-            },
-            modifier = Modifier.fillMaxWidth()
+            label = { Text("Contraseña", color = Color.Black) },
+            leadingIcon = { Icon(Icons.Filled.Lock, contentDescription = null, tint = Color.Black) },
+            textStyle = TextStyle(fontSize = 16.sp, color = Color.Black),
+            visualTransformation = PasswordVisualTransformation(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.Transparent)
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -85,18 +93,35 @@ fun Registro(navController: NavController) {
         OutlinedTextField(
             value = confirmar,
             onValueChange = { confirmar = it },
-            label = { Text("Confirmar contraseña") },
-            leadingIcon = {
-                Icon(imageVector = Icons.Filled.Lock, contentDescription = "Ícono de confirmación")
-            },
-            modifier = Modifier.fillMaxWidth()
+            label = { Text("Confirmar contraseña", color = Color.Black) },
+            leadingIcon = { Icon(Icons.Filled.Lock, contentDescription = null, tint = Color.Black) },
+            textStyle = TextStyle(fontSize = 16.sp, color = Color.Black),
+            visualTransformation = PasswordVisualTransformation(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.Transparent)
         )
+
+        if (error.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(error, color = MaterialTheme.colorScheme.error)
+        }
 
         Spacer(modifier = Modifier.height(24.dp))
 
         Button(
             onClick = {
-                abrirModal = true
+                if (contraseña != confirmar) {
+                    error = "Las contraseñas no coinciden"
+                } else {
+                    val exito = usuarioViewModel.registrar(nombre, correo, contraseña)
+                    if (exito) {
+                        abrirModal = true
+                        error = ""
+                    } else {
+                        error = "Este correo ya está registrado"
+                    }
+                }
             },
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -114,7 +139,10 @@ fun Registro(navController: NavController) {
             title = { Text("Confirmación registro") },
             text = { Text("¡¡Registro exitoso!!", fontSize = 15.sp) },
             confirmButton = {
-                Button(onClick = { abrirModal = false }) {
+                Button(onClick = {
+                    abrirModal = false
+                    navController.navigate("pantallaPrincipal")
+                }) {
                     Text("OK")
                 }
             }

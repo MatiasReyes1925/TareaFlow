@@ -5,94 +5,109 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.example.tareaflow.viewmodel.TareaViewModel
 
 @Composable
-fun EditarTarea(navController: NavController) {
-    var titulo by remember { mutableStateOf("") }
-    var categoriaSeleccionada by remember { mutableStateOf("Estudio") }
-    var abrirModal by remember { mutableStateOf(false) }
+fun EditarTarea(
+    tareaId: Int,
+    navController: NavController,
+    tareaViewModel: TareaViewModel
+) {
+    val tarea = tareaViewModel.tareas.find { it.id == tareaId }
 
-    val categorias = listOf("Estudio", "Trabajo", "Personal", "Otros")
+    if (tarea != null) {
+        var nuevoTitulo by remember { mutableStateOf(tarea.titulo) }
+        var nuevoDetalle by remember { mutableStateOf(tarea.detalle) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(horizontal = 24.dp),
-        verticalArrangement = Arrangement.Top,
-        horizontalAlignment = Alignment.Start
-    ) {
-        Spacer(modifier = Modifier.height(32.dp))
+        val categorias = listOf("Estudio", "Trabajo", "Personal", "Otros")
+        val esCategoriaPersonalizada = tarea.categoria !in categorias
+        var categoriaSeleccionada by remember { mutableStateOf(if (esCategoriaPersonalizada) "Otros" else tarea.categoria) }
+        var categoriaPersonalizada by remember { mutableStateOf(if (esCategoriaPersonalizada) tarea.categoria else "") }
 
-        Text("Editar tarea", fontSize = 22.sp)
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        OutlinedTextField(
-            value = titulo,
-            onValueChange = { titulo = it },
-            label = { Text("Título de la tarea") },
-            modifier = Modifier.fillMaxWidth()
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text("Categoría", fontSize = 16.sp)
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        categorias.forEach { categoria ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(vertical = 4.dp)
-            ) {
-                RadioButton(
-                    selected = categoriaSeleccionada == categoria,
-                    onClick = { categoriaSeleccionada = categoria }
-                )
-                Text(text = categoria, fontSize = 16.sp)
-            }
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        OutlinedTextField(
-            value = "Escribe tu tarea",
-            onValueChange = {},
-            modifier = Modifier.fillMaxWidth(),
-            label = { Text("Detalle de la tarea") }
-        )
-
-        Spacer(modifier = Modifier.height(32.dp))
-
-        Button(
-            onClick = { abrirModal = true },
+        Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp)
+                .fillMaxSize()
+                .padding(24.dp),
+            verticalArrangement = Arrangement.Top
         ) {
-            Text("Guardar cambios", fontSize = 18.sp)
-        }
+            Text("Editar tarea", fontSize = 24.sp)
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        TextButton(onClick = { navController.navigate("pantallaInicio") }) {
-            Text("Volver", fontSize = 16.sp)
-        }
-    }
+            OutlinedTextField(
+                value = nuevoTitulo,
+                onValueChange = { nuevoTitulo = it },
+                label = { Text("Título", color = Color.Black) },
+                textStyle = TextStyle(fontSize = 16.sp, color = Color.Black),
+                modifier = Modifier.fillMaxWidth()
+            )
 
-    if (abrirModal) {
-        AlertDialog(
-            onDismissRequest = { abrirModal = false },
-            title = { Text("Confirmación cambios") },
-            text = { Text("¡¡Tarea editada exitosamente!!", fontSize = 15.sp) },
-            confirmButton = {
-                Button(onClick = { abrirModal = false }) {
-                    Text("OK")
+            Spacer(modifier = Modifier.height(16.dp))
+            Text("Categoría", fontSize = 16.sp)
+            categorias.forEach { categoria ->
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    RadioButton(
+                        selected = categoriaSeleccionada == categoria,
+                        onClick = { categoriaSeleccionada = categoria }
+                    )
+                    Text(categoria)
                 }
             }
-        )
+
+            if (categoriaSeleccionada == "Otros") {
+                Spacer(modifier = Modifier.height(8.dp))
+                OutlinedTextField(
+                    value = categoriaPersonalizada,
+                    onValueChange = { categoriaPersonalizada = it },
+                    label = { Text("Escribe tu categoría", color = Color.Black) },
+                    textStyle = TextStyle(fontSize = 16.sp, color = Color.Black),
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            OutlinedTextField(
+                value = nuevoDetalle,
+                onValueChange = { nuevoDetalle = it },
+                label = { Text("Detalle", color = Color.Black) },
+                textStyle = TextStyle(fontSize = 16.sp, color = Color.Black),
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Button(
+                onClick = {
+                    val categoriaFinal = if (categoriaSeleccionada == "Otros" && categoriaPersonalizada.isNotBlank()) {
+                        categoriaPersonalizada
+                    } else {
+                        categoriaSeleccionada
+                    }
+
+                    tareaViewModel.actualizar(
+                        tareaOriginal = tarea,
+                        nuevoTitulo = nuevoTitulo,
+                        nuevaCategoria = categoriaFinal,
+                        nuevoDetalle = nuevoDetalle
+                    )
+                    navController.navigate("pantallaInicio")
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Guardar cambios")
+            }
+
+            TextButton(onClick = { navController.navigate("pantallaInicio") }) {
+                Text("Volver")
+            }
+        }
+    } else {
+        Text("Tarea no encontrada", fontSize = 18.sp)
     }
 }

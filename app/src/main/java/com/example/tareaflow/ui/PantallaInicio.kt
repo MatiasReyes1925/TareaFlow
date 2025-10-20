@@ -14,27 +14,31 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.tareaflow.R
-
-data class Tarea(val titulo: String, val completada: Boolean)
+import com.example.tareaflow.model.EstadoTarea
+import com.example.tareaflow.viewmodel.TareaViewModel
+import com.example.tareaflow.viewmodel.UsuarioViewModel
 
 @Composable
-fun PantallaInicio(navController: NavController) {
+fun PantallaInicio(
+    navController: NavController,
+    usuarioViewModel: UsuarioViewModel,
+    tareaViewModel: TareaViewModel = viewModel()
+) {
     var menuExpandido by remember { mutableStateOf(false) }
-    var categoriasExpandido by remember { mutableStateOf(false) }
 
-    val tareasPendientes = listOf(
-        Tarea("Estudiar para el examen", false),
-        Tarea("Enviar informe de trabajo", false),
-        Tarea("Comprar materiales", false)
-    )
+    val tareasPendientes by remember {
+        derivedStateOf {
+            tareaViewModel.tareas.filter { it.estado == EstadoTarea.PENDIENTE }
+        }
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 24.dp),
-        verticalArrangement = Arrangement.Top,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Spacer(modifier = Modifier.height(35.dp))
@@ -53,8 +57,24 @@ fun PantallaInicio(navController: NavController) {
                 expanded = menuExpandido,
                 onDismissRequest = { menuExpandido = false }
             ) {
-                DropdownMenuItem(text = { Text("Ver todas las tareas") }, onClick = { menuExpandido = false })
-                DropdownMenuItem(text = { Text("Tareas no completadas") }, onClick = { menuExpandido = false })
+                DropdownMenuItem(
+                    text = { Text("Ver todas las tareas") },
+                    onClick = { menuExpandido = false }
+                )
+                DropdownMenuItem(
+                    text = { Text("Ver tareas completadas") },
+                    onClick = {
+                        menuExpandido = false
+                        navController.navigate("pantallaCompletadas")
+                    }
+                )
+                DropdownMenuItem(
+                    text = { Text("Cerrar sesión") },
+                    onClick = {
+                        menuExpandido = false
+                        navController.navigate("pantallaPrincipal")
+                    }
+                )
             }
         }
 
@@ -72,10 +92,8 @@ fun PantallaInicio(navController: NavController) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        LazyColumn(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            items(tareasPendientes.filter { !it.completada }) { tarea ->
+        LazyColumn(modifier = Modifier.fillMaxWidth()) {
+            items(tareasPendientes) { tarea ->
                 Card(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -84,25 +102,47 @@ fun PantallaInicio(navController: NavController) {
                 ) {
                     Column(modifier = Modifier.padding(16.dp)) {
                         Text(text = tarea.titulo, fontSize = 16.sp)
+                        Text(text = "Categoría: ${tarea.categoria}", fontSize = 14.sp)
+                        Text(text = tarea.detalle, fontSize = 14.sp)
+                        Text(text = "Estado: ${tarea.estado}", fontSize = 14.sp)
+
                         Spacer(modifier = Modifier.height(8.dp))
+
                         Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.End
+                            horizontalArrangement = Arrangement.SpaceEvenly
                         ) {
-                            Button(
+                            IconButton(
                                 onClick = {
-                                    navController.navigate("editarTarea")
+                                    tareaViewModel.marcarComoCompletada(tarea)
                                 },
-                                modifier = Modifier.height(36.dp)
+                                modifier = Modifier.size(36.dp)
                             ) {
-                                Text("Editar", fontSize = 14.sp)
+                                Text("✔️", fontSize = 20.sp)
+                            }
+
+                            IconButton(
+                                onClick = {
+                                    navController.navigate("editarTarea/${tarea.id}")
+                                },
+                                modifier = Modifier.size(36.dp)
+                            ) {
+                                Text("✏️", fontSize = 20.sp)
+                            }
+
+                            IconButton(
+                                onClick = {
+                                    tareaViewModel.eliminarTarea(tarea)
+                                },
+                                modifier = Modifier.size(36.dp)
+                            ) {
+                                Text("❌", fontSize = 20.sp)
                             }
                         }
                     }
                 }
             }
         }
-
 
         Spacer(modifier = Modifier.height(32.dp))
 
@@ -114,24 +154,5 @@ fun PantallaInicio(navController: NavController) {
         ) {
             Text("Agregar nueva tarea", fontSize = 18.sp)
         }
-
-        TextButton(onClick = { navController.navigate("pantallaPrincipal")
-        }) {
-            Text("Cerrar sesión", fontSize = 16.sp)
-        }
-    }
-}
-
-@Composable
-fun CategoriaBoton(texto: String, color: Color, onClick: () -> Unit) {
-    Button(
-        onClick = onClick,
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(50.dp)
-            .padding(vertical = 4.dp),
-        colors = ButtonDefaults.buttonColors(containerColor = color)
-    ) {
-        Text(texto, fontSize = 18.sp)
     }
 }
