@@ -1,27 +1,32 @@
 package com.example.tareaflow.viewmodel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.tareaflow.model.Usuario
 import com.example.tareaflow.repository.UsuarioRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
-class UsuarioViewModel(private val usuarioRepository: UsuarioRepository) : ViewModel() {
+class UsuarioViewModel(private val repository: UsuarioRepository) : ViewModel() {
+    private val _usuarioActual = MutableStateFlow<Usuario?>(null)
+    val usuarioActual: StateFlow<Usuario?> = _usuarioActual.asStateFlow()
 
-    fun registrar(nombre: String, correo: String, contraseña: String): Boolean {
-        val nuevo = Usuario(nombre, correo, contraseña)
-        val registrado = usuarioRepository.registrar(nuevo)
-        println("Usuario Registrado: $registrado → $nuevo")
-        return registrado
+    suspend fun registrarUsuario(usuario: Usuario): Boolean {
+        val exito = repository.registrar(usuario)
+        if (exito) _usuarioActual.value = usuario
+        return exito
     }
 
-    fun iniciarSesion(correo: String, contraseña: String): Boolean {
-        return usuarioRepository.iniciarSesion(correo, contraseña)
+    suspend fun iniciarSesion(correo: String, contraseña: String): Boolean {
+        val usuario = repository.obtenerPorCorreo(correo)
+        val valido = usuario?.contraseña == contraseña
+        if (valido) _usuarioActual.value = usuario
+        return valido
     }
 
     fun cerrarSesion() {
-        usuarioRepository.cerrarSesion()
-    }
-
-    fun obtenerUsuarioActivo(): Usuario? {
-        return usuarioRepository.obtenerUsuarioActivo()
+        _usuarioActual.value = null
     }
 }

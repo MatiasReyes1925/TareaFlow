@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.tareaflow.viewmodel.TareaViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun EditarTarea(
@@ -19,6 +20,7 @@ fun EditarTarea(
     tareaViewModel: TareaViewModel
 ) {
     val tarea = tareaViewModel.tareas.find { it.id == tareaId }
+    val scope = rememberCoroutineScope()
 
     if (tarea != null) {
         var nuevoTitulo by remember { mutableStateOf(tarea.titulo) }
@@ -84,19 +86,21 @@ fun EditarTarea(
 
             Button(
                 onClick = {
-                    val categoriaFinal = if (categoriaSeleccionada == "Otros" && categoriaPersonalizada.isNotBlank()) {
-                        categoriaPersonalizada
-                    } else {
-                        categoriaSeleccionada
-                    }
+                    scope.launch {
+                        val categoriaFinal = if (categoriaSeleccionada == "Otros" && categoriaPersonalizada.isNotBlank()) {
+                            categoriaPersonalizada
+                        } else {
+                            categoriaSeleccionada
+                        }
 
-                    tareaViewModel.actualizar(
-                        tareaOriginal = tarea,
-                        nuevoTitulo = nuevoTitulo,
-                        nuevaCategoria = categoriaFinal,
-                        nuevoDetalle = nuevoDetalle
-                    )
-                    navController.navigate("pantallaInicio")
+                        tareaViewModel.actualizar(
+                            tareaOriginal = tarea,
+                            nuevoTitulo = nuevoTitulo,
+                            nuevaCategoria = categoriaFinal,
+                            nuevoDetalle = nuevoDetalle
+                        )
+                        navController.navigate("pantallaInicio")
+                    }
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {

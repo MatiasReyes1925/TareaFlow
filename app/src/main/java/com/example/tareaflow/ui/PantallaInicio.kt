@@ -14,20 +14,28 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.tareaflow.R
 import com.example.tareaflow.model.EstadoTarea
 import com.example.tareaflow.viewmodel.TareaViewModel
 import com.example.tareaflow.viewmodel.UsuarioViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun PantallaInicio(
     navController: NavController,
     usuarioViewModel: UsuarioViewModel,
-    tareaViewModel: TareaViewModel = viewModel()
+    tareaViewModel: TareaViewModel
 ) {
     var menuExpandido by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
+    val usuarioActual by usuarioViewModel.usuarioActual.collectAsState()
+
+    LaunchedEffect(usuarioActual) {
+        usuarioActual?.id?.let {
+            tareaViewModel.cargarTareas(it)
+        }
+    }
 
     val tareasPendientes by remember {
         derivedStateOf {
@@ -46,21 +54,26 @@ fun PantallaInicio(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 4.dp),
-            horizontalArrangement = Arrangement.Start
+                .padding(horizontal = 4.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             IconButton(onClick = { menuExpandido = true }) {
                 Icon(Icons.Default.Menu, contentDescription = "Menú de tareas")
             }
 
+            IconButton(onClick = { navController.navigate("pantallaPerfil") }) {
+                Image(
+                    painter = painterResource(id = R.drawable.logousuario),
+                    contentDescription = "Ir al perfil",
+                    modifier = Modifier.size(36.dp)
+                )
+            }
+
             DropdownMenu(
                 expanded = menuExpandido,
                 onDismissRequest = { menuExpandido = false }
-            ) {
-                DropdownMenuItem(
-                    text = { Text("Ver todas las tareas") },
-                    onClick = { menuExpandido = false }
-                )
+            ){
                 DropdownMenuItem(
                     text = { Text("Ver tareas completadas") },
                     onClick = {
@@ -72,7 +85,11 @@ fun PantallaInicio(
                     text = { Text("Cerrar sesión") },
                     onClick = {
                         menuExpandido = false
-                        navController.navigate("pantallaPrincipal")
+                        usuarioViewModel.cerrarSesion()
+                        navController.navigate("pantallaPrincipal") {
+                            popUpTo(navController.graph.startDestinationId)
+                            launchSingleTop = true
+                        }
                     }
                 )
             }
@@ -114,7 +131,9 @@ fun PantallaInicio(
                         ) {
                             IconButton(
                                 onClick = {
-                                    tareaViewModel.marcarComoCompletada(tarea)
+                                    scope.launch {
+                                        tareaViewModel.marcarComoCompletada(tarea)
+                                    }
                                 },
                                 modifier = Modifier.size(36.dp)
                             ) {
@@ -132,7 +151,9 @@ fun PantallaInicio(
 
                             IconButton(
                                 onClick = {
-                                    tareaViewModel.eliminarTarea(tarea)
+                                    scope.launch {
+                                        tareaViewModel.eliminarTarea(tarea)
+                                    }
                                 },
                                 modifier = Modifier.size(36.dp)
                             ) {

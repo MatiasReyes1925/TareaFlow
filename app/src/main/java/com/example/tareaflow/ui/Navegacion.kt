@@ -8,12 +8,9 @@ import com.example.tareaflow.viewmodel.UsuarioViewModel
 import com.example.tareaflow.viewmodel.TareaViewModel
 import com.example.tareaflow.ui.EditarTarea
 
-import androidx.lifecycle.viewmodel.compose.viewModel
-
 @Composable
-fun Navegacion(usuarioViewModel: UsuarioViewModel) {
+fun Navegacion(usuarioViewModel: UsuarioViewModel, tareaViewModel: TareaViewModel) {
     val navController = rememberNavController()
-    val tareaViewModel: TareaViewModel = viewModel()
 
     NavHost(navController = navController, startDestination = "pantallaPrincipal") {
         composable("pantallaPrincipal") { PantallaPrincipal(navController) }

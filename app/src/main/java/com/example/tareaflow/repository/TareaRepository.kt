@@ -1,26 +1,22 @@
 package com.example.tareaflow.repository
 
 import com.example.tareaflow.model.Tarea
+import com.example.tareaflow.model.TareaDao
 
-class TareaRepository {
-    private val listaDeTareas = mutableListOf<Tarea>()
-
-    fun obtenerTareas(): List<Tarea> {
-        return listaDeTareas
+class TareaRepository(private val dao: TareaDao) {
+    suspend fun obtenerTareas(idUsuario: Int): List<Tarea> {
+        return dao.obtenerPorUsuario(idUsuario)
     }
 
-    fun agregarTarea(tarea: Tarea) {
-        listaDeTareas.add(tarea)
+    suspend fun agregarTarea(tarea: Tarea) {
+        dao.insertar(tarea)
     }
 
-    fun actualizarTarea(original: Tarea, actualizada: Tarea) {
-        val index = listaDeTareas.indexOf(original)
-        if (index != -1) {
-            listaDeTareas[index] = actualizada
-        }
+    suspend fun actualizarTarea(tarea: Tarea) {
+        dao.actualizar(tarea)
     }
 
-    fun eliminarTarea(tarea: Tarea) {
-        listaDeTareas.remove(tarea)
+    suspend fun eliminarTarea(tarea: Tarea) {
+        dao.eliminar(tarea)
     }
 }

@@ -1,12 +1,13 @@
 package com.example.tareaflow.ui
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -15,20 +16,32 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.tareaflow.R
+import com.example.tareaflow.viewmodel.UsuarioFormViewModel
 import com.example.tareaflow.viewmodel.UsuarioViewModel
+import kotlinx.coroutines.launch
 
 @Composable
-fun Registro(navController: NavController, usuarioViewModel: UsuarioViewModel) {
-    var nombre by remember { mutableStateOf("") }
-    var correo by remember { mutableStateOf("") }
-    var contraseña by remember { mutableStateOf("") }
+fun Registro(
+    navController: NavController,
+    usuarioViewModel: UsuarioViewModel,
+    formViewModel: UsuarioFormViewModel = remember { UsuarioFormViewModel() }
+) {
+    val formulario by formViewModel.form.collectAsState()
+    val errores by formViewModel.errors.collectAsState()
+    val scope = rememberCoroutineScope()
+
     var confirmar by remember { mutableStateOf("") }
+    var confirmarValidado by remember { mutableStateOf(false) }
     var abrirModal by remember { mutableStateOf(false) }
-    var error by remember { mutableStateOf("") }
+    var errorGeneral by remember { mutableStateOf("") }
+
+    var mostrarContraseña by remember { mutableStateOf(false) }
+    var mostrarConfirmar by remember { mutableStateOf(false) }
 
     Column(
         modifier = Modifier
@@ -51,75 +64,111 @@ fun Registro(navController: NavController, usuarioViewModel: UsuarioViewModel) {
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
-            value = nombre,
-            onValueChange = { nombre = it },
+            value = formulario.nombre,
+            onValueChange = { formViewModel.onNombreChange(it) },
             label = { Text("Nombre completo", color = Color.Black) },
             leadingIcon = { Icon(Icons.Filled.Person, contentDescription = null, tint = Color.Black) },
+            isError = errores.nombre != null,
+            supportingText = {
+                errores.nombre?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+            },
             textStyle = TextStyle(fontSize = 16.sp, color = Color.Black),
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.Transparent)
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
-            value = correo,
-            onValueChange = { correo = it },
+            value = formulario.correo,
+            onValueChange = { formViewModel.onCorreoChange(it) },
             label = { Text("Correo electrónico", color = Color.Black) },
             leadingIcon = { Icon(Icons.Filled.Email, contentDescription = null, tint = Color.Black) },
+            isError = errores.correo != null,
+            supportingText = {
+                errores.correo?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+            },
             textStyle = TextStyle(fontSize = 16.sp, color = Color.Black),
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.Transparent)
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
-            value = contraseña,
-            onValueChange = { contraseña = it },
+            value = formulario.contraseña,
+            onValueChange = { formViewModel.onContraseñaChange(it) },
             label = { Text("Contraseña", color = Color.Black) },
             leadingIcon = { Icon(Icons.Filled.Lock, contentDescription = null, tint = Color.Black) },
+            trailingIcon = {
+                IconButton(onClick = { mostrarContraseña = !mostrarContraseña }) {
+                    Icon(
+                        imageVector = if (mostrarContraseña) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
+                        contentDescription = "Mostrar/Ocultar contraseña"
+                    )
+                }
+            },
+            isError = errores.contraseña != null,
+            supportingText = {
+                errores.contraseña?.let { Text(it, color = MaterialTheme.colorScheme.error) }
+            },
+            visualTransformation = if (mostrarContraseña) VisualTransformation.None else PasswordVisualTransformation(),
             textStyle = TextStyle(fontSize = 16.sp, color = Color.Black),
-            visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.Transparent)
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
         OutlinedTextField(
             value = confirmar,
-            onValueChange = { confirmar = it },
+            onValueChange = {
+                confirmar = it
+                confirmarValidado = true
+            },
             label = { Text("Confirmar contraseña", color = Color.Black) },
             leadingIcon = { Icon(Icons.Filled.Lock, contentDescription = null, tint = Color.Black) },
+            trailingIcon = {
+                IconButton(onClick = { mostrarConfirmar = !mostrarConfirmar }) {
+                    Icon(
+                        imageVector = if (mostrarConfirmar) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
+                        contentDescription = "Mostrar/Ocultar confirmación"
+                    )
+                }
+            },
+            isError = confirmarValidado && confirmar != formulario.contraseña,
+            supportingText = {
+                if (confirmarValidado && confirmar != formulario.contraseña) {
+                    Text("Las contraseñas no coinciden", color = MaterialTheme.colorScheme.error)
+                }
+            },
+            visualTransformation = if (mostrarConfirmar) VisualTransformation.None else PasswordVisualTransformation(),
             textStyle = TextStyle(fontSize = 16.sp, color = Color.Black),
-            visualTransformation = PasswordVisualTransformation(),
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.Transparent)
+            modifier = Modifier.fillMaxWidth()
         )
 
-        if (error.isNotEmpty()) {
+        if (errorGeneral.isNotEmpty()) {
             Spacer(modifier = Modifier.height(8.dp))
-            Text(error, color = MaterialTheme.colorScheme.error)
+            Text(errorGeneral, color = MaterialTheme.colorScheme.error)
         }
 
         Spacer(modifier = Modifier.height(24.dp))
 
         Button(
             onClick = {
-                if (contraseña != confirmar) {
-                    error = "Las contraseñas no coinciden"
-                } else {
-                    val exito = usuarioViewModel.registrar(nombre, correo, contraseña)
-                    if (exito) {
-                        abrirModal = true
-                        error = ""
+                scope.launch {
+                    confirmarValidado = true
+                    val valido = formViewModel.isFormValid(errores)
+
+                    if (!valido) {
+                        errorGeneral = "Revisa los campos marcados"
+                    } else if (formulario.contraseña != confirmar) {
+                        errorGeneral = "Las contraseñas no coinciden"
                     } else {
-                        error = "Este correo ya está registrado"
+                        val exito = usuarioViewModel.registrarUsuario(formulario)
+                        if (exito) {
+                            abrirModal = true
+                            errorGeneral = ""
+                        } else {
+                            errorGeneral = "Este correo ya está registrado"
+                        }
                     }
                 }
             },

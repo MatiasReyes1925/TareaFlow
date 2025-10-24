@@ -2,60 +2,52 @@ package com.example.tareaflow.viewmodel
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.tareaflow.model.EstadoTarea
 import com.example.tareaflow.model.Tarea
 import com.example.tareaflow.repository.TareaRepository
+import kotlinx.coroutines.launch
 
-class TareaViewModel(private val repository: TareaRepository = TareaRepository()) : ViewModel() {
-    private var contadorId = 0
+class TareaViewModel(private val repository: TareaRepository) : ViewModel() {
     val tareas = mutableStateListOf<Tarea>()
-    private val listaDeTareas = mutableListOf<Tarea>()
-    init {
-        tareas.addAll(repository.obtenerTareas())
-    }
 
-    fun agregar(titulo: String, categoria: String, detalle: String) {
-        val nueva = Tarea(
-            id = contadorId++,
-            titulo = titulo,
-            detalle = detalle,
-            categoria = categoria,
-            estado = EstadoTarea.PENDIENTE
-        )
-        tareas.add(nueva)
-        repository.agregarTarea(nueva)
-    }
-
-    fun marcarComoCompletada(tarea: Tarea) {
-        val index = tareas.indexOf(tarea)
-        if (index != -1) {
-            val actualizada = tarea.copy(estado = EstadoTarea.COMPLETADA)
-            tareas[index] = actualizada
-            repository.actualizarTarea(tarea, actualizada)
+    fun cargarTareas(idUsuario: Int) {
+        viewModelScope.launch {
+            tareas.clear()
+            tareas.addAll(repository.obtenerTareas(idUsuario))
         }
     }
 
-    fun actualizar(tareaOriginal: Tarea, nuevoTitulo: String, nuevaCategoria: String, nuevoDetalle: String) {
+    suspend fun agregar(titulo: String, categoria: String, detalle: String, idUsuario: Int) {
+        val nueva = Tarea(
+            titulo = titulo,
+            detalle = detalle,
+            categoria = categoria,
+            idUsuario = idUsuario,
+            estado = EstadoTarea.PENDIENTE
+        )
+        repository.agregarTarea(nueva)
+        cargarTareas(idUsuario) // Recargar la lista
+    }
+
+    suspend fun marcarComoCompletada(tarea: Tarea) {
+        val actualizada = tarea.copy(estado = EstadoTarea.COMPLETADA)
+        repository.actualizarTarea(actualizada)
+        cargarTareas(tarea.idUsuario)
+    }
+
+    suspend fun actualizar(tareaOriginal: Tarea, nuevoTitulo: String, nuevaCategoria: String, nuevoDetalle: String) {
         val tareaActualizada = tareaOriginal.copy(
             titulo = nuevoTitulo,
             categoria = nuevaCategoria,
             detalle = nuevoDetalle
         )
-        val index = tareas.indexOf(tareaOriginal)
-        if (index != -1) {
-            tareas[index] = tareaActualizada
-            repository.actualizarTarea(tareaOriginal, tareaActualizada)
-        }
+        repository.actualizarTarea(tareaActualizada)
+        cargarTareas(tareaOriginal.idUsuario)
     }
 
-    fun eliminarTarea(tarea: Tarea) {
-        tareas.remove(tarea)
+    suspend fun eliminarTarea(tarea: Tarea) {
         repository.eliminarTarea(tarea)
-    }
-
-    fun reiniciarContadorSiListaVacia() {
-        if (tareas.isEmpty()) {
-            contadorId = 0
-        }
+        cargarTareas(tarea.idUsuario)
     }
 }

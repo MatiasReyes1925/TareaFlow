@@ -19,12 +19,14 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.tareaflow.R
 import com.example.tareaflow.viewmodel.UsuarioViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun IniciarSesion(navController: NavController, usuarioViewModel: UsuarioViewModel) {
     var usuario by remember { mutableStateOf("") }
     var contraseña by remember { mutableStateOf("") }
     var error by remember { mutableStateOf("") }
+    val scope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
@@ -82,12 +84,14 @@ fun IniciarSesion(navController: NavController, usuarioViewModel: UsuarioViewMod
 
         Button(
             onClick = {
-                val exito = usuarioViewModel.iniciarSesion(usuario, contraseña)
-                if (exito) {
-                    error = ""
-                    navController.navigate("pantallaInicio")
-                } else {
-                    error = "Correo o contraseña incorrectos"
+                scope.launch {
+                    val exito = usuarioViewModel.iniciarSesion(usuario, contraseña)
+                    if (exito) {
+                        error = ""
+                        navController.navigate("pantallaInicio")
+                    } else {
+                        error = "Correo o contraseña incorrectos"
+                    }
                 }
             },
             modifier = Modifier.fillMaxWidth()

@@ -1,27 +1,20 @@
 package com.example.tareaflow.repository
 
 import com.example.tareaflow.model.Usuario
+import com.example.tareaflow.model.UsuarioDao
 
-class UsuarioRepository {
-    private val usuarios = mutableListOf<Usuario>()
-    private var usuarioActivo: Usuario? = null
-
-    fun registrar(usuario: Usuario): Boolean {
-        if (usuarios.any { it.correo == usuario.correo }) return false
-        usuarios.add(usuario)
-        usuarioActivo = usuario
-        return true
+class UsuarioRepository(private val dao: UsuarioDao) {
+    suspend fun registrar(usuario: Usuario): Boolean {
+        val existente = dao.obtenerPorCorreo(usuario.correo)
+        return if (existente == null) {
+            dao.insertar(usuario)
+            true
+        } else {
+            false
+        }
     }
 
-    fun iniciarSesion(correo: String, contraseña: String): Boolean {
-        val usuario = usuarios.find { it.correo == correo && it.contraseña == contraseña }
-        usuarioActivo = usuario
-        return usuario != null
+    suspend fun obtenerPorCorreo(correo: String): Usuario? {
+        return dao.obtenerPorCorreo(correo)
     }
-
-    fun cerrarSesion() {
-        usuarioActivo = null
-    }
-
-    fun obtenerUsuarioActivo(): Usuario? = usuarioActivo
 }
