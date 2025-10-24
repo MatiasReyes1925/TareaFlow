@@ -67,6 +67,7 @@ fun IniciarSesion(navController: NavController, usuarioViewModel: UsuarioViewMod
             onValueChange = { contraseña = it },
             label = { Text("Contraseña", color = Color.Black) },
             leadingIcon = { Icon(Icons.Filled.Lock, contentDescription = null, tint = Color.Black) },
+
             singleLine = true,
             visualTransformation = PasswordVisualTransformation(),
             textStyle = TextStyle(fontSize = 16.sp, color = Color.Black),

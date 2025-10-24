@@ -6,7 +6,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.tareaflow.viewmodel.UsuarioViewModel
 import com.example.tareaflow.viewmodel.TareaViewModel
-import com.example.tareaflow.ui.EditarTarea
 
 @Composable
 fun Navegacion(usuarioViewModel: UsuarioViewModel, tareaViewModel: TareaViewModel) {
@@ -20,9 +19,11 @@ fun Navegacion(usuarioViewModel: UsuarioViewModel, tareaViewModel: TareaViewMode
         composable("agregarTarea") { AgregarTarea(navController, tareaViewModel) }
         composable("editarTarea/{id}") { backStackEntry ->
             val id = backStackEntry.arguments?.getString("id")?.toIntOrNull()
-            if (id != null) { EditarTarea(id, navController, tareaViewModel) } }
-
+            if (id != null) {
+                EditarTarea(id, navController, tareaViewModel)
+            }
+        }
         composable("pantallaCompletadas") { PanTareaCompletada(navController, usuarioViewModel, tareaViewModel) }
-
+        composable("pantallaPerfil") { PantallaPerfil(navController, usuarioViewModel) }
     }
 }

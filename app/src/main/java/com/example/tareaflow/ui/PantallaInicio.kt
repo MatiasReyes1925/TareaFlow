@@ -61,19 +61,18 @@ fun PantallaInicio(
             IconButton(onClick = { menuExpandido = true }) {
                 Icon(Icons.Default.Menu, contentDescription = "Menú de tareas")
             }
-
             IconButton(onClick = { navController.navigate("pantallaPerfil") }) {
                 Image(
                     painter = painterResource(id = R.drawable.logousuario),
                     contentDescription = "Ir al perfil",
-                    modifier = Modifier.size(36.dp)
+                    modifier = Modifier.size(30.dp)
                 )
             }
 
             DropdownMenu(
                 expanded = menuExpandido,
                 onDismissRequest = { menuExpandido = false }
-            ){
+            ) {
                 DropdownMenuItem(
                     text = { Text("Ver tareas completadas") },
                     onClick = {
@@ -81,20 +80,8 @@ fun PantallaInicio(
                         navController.navigate("pantallaCompletadas")
                     }
                 )
-                DropdownMenuItem(
-                    text = { Text("Cerrar sesión") },
-                    onClick = {
-                        menuExpandido = false
-                        usuarioViewModel.cerrarSesion()
-                        navController.navigate("pantallaPrincipal") {
-                            popUpTo(navController.graph.startDestinationId)
-                            launchSingleTop = true
-                        }
-                    }
-                )
             }
         }
-
         Image(
             painter = painterResource(id = R.drawable.logotareaflow),
             contentDescription = "Logo de TareaFlow",

@@ -14,6 +14,7 @@ import androidx.navigation.NavController
 import com.example.tareaflow.model.EstadoTarea
 import com.example.tareaflow.viewmodel.TareaViewModel
 import com.example.tareaflow.viewmodel.UsuarioViewModel
+import kotlinx.coroutines.launch
 
 @Composable
 fun PanTareaCompletada(
@@ -26,6 +27,7 @@ fun PanTareaCompletada(
             tareaViewModel.tareas.filter { it.estado == EstadoTarea.COMPLETADA }
         }
     }
+    val scope = rememberCoroutineScope()
 
     Column(
         modifier = Modifier
@@ -47,16 +49,29 @@ fun PanTareaCompletada(
                         .padding(vertical = 4.dp),
                     colors = CardDefaults.cardColors(containerColor = Color.LightGray)
                 ) {
-                    Column(modifier = Modifier.padding(16.dp)) {
-                        Text(text = tarea.titulo, fontSize = 16.sp)
-                        Text(text = "Categoría: ${tarea.categoria}", fontSize = 14.sp)
-                        Text(text = tarea.detalle, fontSize = 14.sp)
-                        Text(text = "Estado: ${tarea.estado}", fontSize = 14.sp)
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(text = tarea.titulo, fontSize = 16.sp)
+                            Text(text = "Categoría: ${tarea.categoria}", fontSize = 14.sp)
+                            Text(text = tarea.detalle, fontSize = 14.sp)
+                            Text(text = "Estado: ${tarea.estado}", fontSize = 14.sp)
+                        }
+                        IconButton(onClick = {
+                            scope.launch {
+                                tareaViewModel.eliminarTarea(tarea)
+                            }
+                        }) {
+                            Text("❌", fontSize = 20.sp)
+                        }
                     }
                 }
             }
         }
-
 
         Spacer(modifier = Modifier.height(32.dp))
 

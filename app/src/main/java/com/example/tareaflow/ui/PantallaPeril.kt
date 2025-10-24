@@ -73,6 +73,13 @@ fun PantallaPerfil(
 
         TextButton(
             onClick = {
+                navController.navigate("pantallaInicio")
+            }
+        ) {
+            Text("Volver al inicio")
+        }
+        TextButton(
+            onClick = {
                 usuarioViewModel.cerrarSesion()
                 navController.navigate("pantallaPrincipal") {
                     popUpTo(navController.graph.startDestinationId)
