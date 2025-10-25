@@ -21,10 +21,10 @@ class MainActivity : ComponentActivity() {
                 val context = LocalContext.current
                 val database = AppDatabase.obtenerInstancia(context)
 
-                val usuarioRepository = remember { UsuarioRepository(database.usuarioDao()) }
-                val usuarioViewModel = remember { UsuarioViewModel(usuarioRepository) }
+                val usuarioRepository = UsuarioRepository(database.usuarioDao())
+                val tareaRepository = TareaRepository(database.tareaDao())
 
-                val tareaRepository = remember { TareaRepository(database.tareaDao()) }
+                val usuarioViewModel = remember { UsuarioViewModel(usuarioRepository) }
                 val tareaViewModel = remember { TareaViewModel(tareaRepository) }
 
                 Navegacion(usuarioViewModel, tareaViewModel)

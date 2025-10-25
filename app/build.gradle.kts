@@ -55,6 +55,7 @@ dependencies {
     implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.exifinterface)
     ksp(libs.androidx.room.compiler)
 
     implementation("androidx.camera:camera-core:1.3.0")

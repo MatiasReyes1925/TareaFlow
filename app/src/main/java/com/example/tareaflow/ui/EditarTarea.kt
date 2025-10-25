@@ -1,28 +1,18 @@
 package com.example.tareaflow.ui
 
-import android.Manifest
 import android.graphics.Bitmap
-import android.net.Uri
-import android.provider.MediaStore
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.FileProvider
 import androidx.navigation.NavController
 import com.example.tareaflow.viewmodel.TareaViewModel
 import kotlinx.coroutines.launch
-import java.io.File
 
 @Composable
 fun EditarTarea(
@@ -33,43 +23,16 @@ fun EditarTarea(
     val tarea = tareaViewModel.tareas.find { it.id == tareaId }
     val scope = rememberCoroutineScope()
 
-    if (tarea != null) {
-        var nuevoTitulo by remember { mutableStateOf(tarea.titulo) }
-        var nuevoDetalle by remember { mutableStateOf(tarea.detalle) }
+    tarea?.let {
+        var nuevoTitulo by remember { mutableStateOf(it.titulo) }
+        var nuevoDetalle by remember { mutableStateOf(it.detalle) }
 
         val categorias = listOf("Estudio", "Trabajo", "Personal", "Otros")
-        val esCategoriaPersonalizada = tarea.categoria !in categorias
-        var categoriaSeleccionada by remember { mutableStateOf(if (esCategoriaPersonalizada) "Otros" else tarea.categoria) }
-        var categoriaPersonalizada by remember { mutableStateOf(if (esCategoriaPersonalizada) tarea.categoria else "") }
+        val esCategoriaPersonalizada = it.categoria !in categorias
+        var categoriaSeleccionada by remember { mutableStateOf(if (esCategoriaPersonalizada) "Otros" else it.categoria) }
+        var categoriaPersonalizada by remember { mutableStateOf(if (esCategoriaPersonalizada) it.categoria else "") }
 
         var fotoEditada by remember { mutableStateOf<Bitmap?>(null) }
-        val context = LocalContext.current
-        var imageUri by remember { mutableStateOf<Uri?>(null) }
-
-        val takePictureLauncher = rememberLauncherForActivityResult(
-            ActivityResultContracts.TakePicture()
-        ) { success ->
-            if (success && imageUri != null) {
-                val bmp = MediaStore.Images.Media.getBitmap(context.contentResolver, imageUri)
-                fotoEditada = bmp
-            }
-        }
-
-        val cameraPermissionLauncher = rememberLauncherForActivityResult(
-            ActivityResultContracts.RequestPermission()
-        ) { granted ->
-            if (granted) {
-                val file = File.createTempFile("editar_foto", ".jpg", context.cacheDir)
-                file.deleteOnExit()
-                val uri = FileProvider.getUriForFile(
-                    context,
-                    context.packageName + ".provider",
-                    file
-                )
-                imageUri = uri
-                takePictureLauncher.launch(uri)
-            }
-        }
 
         Column(
             modifier = Modifier
@@ -124,22 +87,11 @@ fun EditarTarea(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            if (fotoEditada != null) {
-                Image(
-                    bitmap = fotoEditada!!.asImageBitmap(),
-                    contentDescription = "Foto de tarea",
-                    modifier = Modifier
-                        .size(200.dp)
-                        .padding(8.dp)
-                )
-            }
-            TextButton(onClick = {
-                cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
-            }) {
-                Text("Tomar foto de tarea")
-            }
+            Camara(
+                bitmap = fotoEditada,
+                onFotoTomada = { nuevaFoto -> fotoEditada = nuevaFoto }
+            )
 
-            Spacer(modifier = Modifier.height(32.dp))
 
             Button(
                 onClick = {
@@ -151,7 +103,7 @@ fun EditarTarea(
                         }
 
                         tareaViewModel.actualizar(
-                            tareaOriginal = tarea,
+                            tareaOriginal = it,
                             nuevoTitulo = nuevoTitulo,
                             nuevaCategoria = categoriaFinal,
                             nuevoDetalle = nuevoDetalle
@@ -168,7 +120,5 @@ fun EditarTarea(
                 Text("Volver")
             }
         }
-    } else {
-        Text("Tarea no encontrada", fontSize = 18.sp)
     }
 }

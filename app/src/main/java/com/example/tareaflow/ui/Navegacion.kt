@@ -13,10 +13,16 @@ fun Navegacion(usuarioViewModel: UsuarioViewModel, tareaViewModel: TareaViewMode
 
     NavHost(navController = navController, startDestination = "pantallaPrincipal") {
         composable("pantallaPrincipal") { PantallaPrincipal(navController) }
-        composable("iniciarSesion") { IniciarSesion(navController, usuarioViewModel) }
+        composable("iniciarSesion") { IniciarSesion(navController, usuarioViewModel, tareaViewModel) }
         composable("registro") { Registro(navController, usuarioViewModel) }
         composable("pantallaInicio") { PantallaInicio(navController, usuarioViewModel, tareaViewModel) }
-        composable("agregarTarea") { AgregarTarea(navController, tareaViewModel) }
+        composable("agregarTarea") {
+            AgregarTarea(
+                navController = navController,
+                tareaViewModel = tareaViewModel,
+                usuarioViewModel = usuarioViewModel
+            )
+        }
         composable("editarTarea/{id}") { backStackEntry ->
             val id = backStackEntry.arguments?.getString("id")?.toIntOrNull()
             if (id != null) {

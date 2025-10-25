@@ -10,7 +10,8 @@ data class Tarea(
     val detalle: String,
     val categoria: String,
     val idUsuario: Int,
-    val estado: EstadoTarea = EstadoTarea.PENDIENTE
+    val estado: EstadoTarea,
+    val fotoUri: String? = null
 )
 
 enum class EstadoTarea {

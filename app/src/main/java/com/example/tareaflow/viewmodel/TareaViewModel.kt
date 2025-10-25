@@ -18,16 +18,21 @@ class TareaViewModel(private val repository: TareaRepository) : ViewModel() {
         }
     }
 
-    suspend fun agregar(titulo: String, categoria: String, detalle: String, idUsuario: Int) {
+    suspend fun agregar(
+        titulo: String,
+        categoria: String,
+        detalle: String,
+        idUsuario: Int,
+    ) {
         val nueva = Tarea(
             titulo = titulo,
             detalle = detalle,
             categoria = categoria,
             idUsuario = idUsuario,
-            estado = EstadoTarea.PENDIENTE
+            estado = EstadoTarea.PENDIENTE,
         )
         repository.agregarTarea(nueva)
-        cargarTareas(idUsuario) // Recargar la lista
+        cargarTareas(idUsuario)
     }
 
     suspend fun marcarComoCompletada(tarea: Tarea) {
@@ -36,11 +41,16 @@ class TareaViewModel(private val repository: TareaRepository) : ViewModel() {
         cargarTareas(tarea.idUsuario)
     }
 
-    suspend fun actualizar(tareaOriginal: Tarea, nuevoTitulo: String, nuevaCategoria: String, nuevoDetalle: String) {
+    suspend fun actualizar(
+        tareaOriginal: Tarea,
+        nuevoTitulo: String,
+        nuevaCategoria: String,
+        nuevoDetalle: String,
+    ) {
         val tareaActualizada = tareaOriginal.copy(
             titulo = nuevoTitulo,
             categoria = nuevaCategoria,
-            detalle = nuevoDetalle
+            detalle = nuevoDetalle,
         )
         repository.actualizarTarea(tareaActualizada)
         cargarTareas(tareaOriginal.idUsuario)

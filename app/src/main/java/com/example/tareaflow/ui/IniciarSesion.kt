@@ -19,10 +19,15 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.tareaflow.R
 import com.example.tareaflow.viewmodel.UsuarioViewModel
+import com.example.tareaflow.viewmodel.TareaViewModel
 import kotlinx.coroutines.launch
 
 @Composable
-fun IniciarSesion(navController: NavController, usuarioViewModel: UsuarioViewModel) {
+fun IniciarSesion(
+    navController: NavController,
+    usuarioViewModel: UsuarioViewModel,
+    tareaViewModel: TareaViewModel // ✅ Se agrega este parámetro
+) {
     var usuario by remember { mutableStateOf("") }
     var contraseña by remember { mutableStateOf("") }
     var error by remember { mutableStateOf("") }
@@ -67,7 +72,6 @@ fun IniciarSesion(navController: NavController, usuarioViewModel: UsuarioViewMod
             onValueChange = { contraseña = it },
             label = { Text("Contraseña", color = Color.Black) },
             leadingIcon = { Icon(Icons.Filled.Lock, contentDescription = null, tint = Color.Black) },
-
             singleLine = true,
             visualTransformation = PasswordVisualTransformation(),
             textStyle = TextStyle(fontSize = 16.sp, color = Color.Black),
