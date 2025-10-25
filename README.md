@@ -68,7 +68,7 @@ Código
 
 ## Distribución de archivos
 
-El proyecto está organizado de forma modular y clara, con separación por responsabilidades. La estructura actual es la siguiente:
+```text
 ├── manifests/
 │   └── AndroidManifest.xml
 
@@ -118,3 +118,5 @@ El proyecto está organizado de forma modular y clara, con separación por respo
 │   ├── libs.versions.toml
 │   ├── local.properties
 │   └── settings.gradle.kts
+```
+
