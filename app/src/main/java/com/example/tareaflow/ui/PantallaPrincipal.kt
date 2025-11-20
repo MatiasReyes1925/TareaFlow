@@ -2,13 +2,11 @@ package com.example.tareaflow.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
@@ -46,10 +44,15 @@ fun PantallaPrincipal(navController: NavController) {
             onClick = { navController.navigate("iniciarSesion") },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(50.dp)
+                .height(50.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF1976D2),
+                contentColor = Color.White
+            )
         ) {
             Text("Iniciar Sesión", fontSize = 18.sp)
         }
+
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center,
@@ -57,7 +60,12 @@ fun PantallaPrincipal(navController: NavController) {
         ) {
             Text("¿No tienes cuenta?", fontSize = 16.sp)
             Spacer(modifier = Modifier.width(4.dp))
-            TextButton(onClick = { navController.navigate("registro") }) {
+            TextButton(
+                onClick = { navController.navigate("registro") },
+                colors = ButtonDefaults.textButtonColors(
+                    contentColor = Color(0xFF1976D2)
+                )
+            ) {
                 Text("Regístrate aquí", fontSize = 16.sp)
             }
         }

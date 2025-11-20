@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.tareaflow.model.EstadoTarea
 import com.example.tareaflow.model.Tarea
 import com.example.tareaflow.repository.TareaRepository
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class TareaViewModel(private val repository: TareaRepository) : ViewModel() {
@@ -16,6 +17,10 @@ class TareaViewModel(private val repository: TareaRepository) : ViewModel() {
             tareas.clear()
             tareas.addAll(repository.obtenerTareas(idUsuario))
         }
+    }
+
+    fun obtenerTareaPorId(id: Int): Flow<Tarea?> {
+        return repository.obtenerTareaPorId(id)
     }
 
     suspend fun agregar(

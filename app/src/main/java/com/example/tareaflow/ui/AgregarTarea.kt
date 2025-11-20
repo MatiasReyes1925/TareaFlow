@@ -37,14 +37,10 @@ fun AgregarTarea(
         modifier = Modifier
             .fillMaxSize()
             .padding(24.dp),
-        verticalArrangement = Arrangement.Top
+        verticalArrangement = Arrangement.Top,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(
-            modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text("Agregar Nueva Tarea", fontSize = 24.sp)
-        }
+        Text("Agregar Nueva Tarea", fontSize = 24.sp)
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -58,9 +54,12 @@ fun AgregarTarea(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text("Categoría", fontSize = 16.sp)
+        Text("Categoría", fontSize = 16.sp, modifier = Modifier.align(Alignment.Start))
         categorias.forEach { categoria ->
-            Row(verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.align(Alignment.Start)
+            ) {
                 RadioButton(
                     selected = categoriaSeleccionada == categoria,
                     onClick = { categoriaSeleccionada = categoria }
@@ -98,6 +97,7 @@ fun AgregarTarea(
             onFotoTomada = { nuevaFoto -> fotoTarea = nuevaFoto }
         )
 
+
         Button(
             onClick = {
                 if (titulo.isNotBlank()) {
@@ -114,17 +114,31 @@ fun AgregarTarea(
                                 categoria = categoriaFinal,
                                 idUsuario = idUsuario
                             )
-                            navController.navigate("pantallaInicio")
+                            // Navegar y limpiar el backstack
+                            navController.navigate("pantallaInicio") {
+                                popUpTo("pantallaInicio") { inclusive = true }
+                                launchSingleTop = true
+                            }
                         }
                     }
                 }
             },
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF1976D2),
+                contentColor = Color.White
+            )
         ) {
             Text("Guardar Tarea")
         }
 
-        TextButton(onClick = { navController.navigate("pantallaInicio") }) {
+        TextButton(
+            onClick = { navController.navigate("pantallaInicio") },
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            colors = ButtonDefaults.textButtonColors(
+                contentColor = Color(0xFF1976D2)
+            )
+        ) {
             Text("Volver")
         }
     }

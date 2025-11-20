@@ -149,6 +149,15 @@ fun PantallaInicio(
                                 ) {
                                     Text("❌", fontSize = 20.sp)
                                 }
+
+                                IconButton(
+                                    onClick = {
+                                        navController.navigate("verTarea/${tarea.id}")
+                                    },
+                                    modifier = Modifier.size(36.dp)
+                                ) {
+                                    Text("👁️", fontSize = 20.sp)
+                                }
                             }
                         }
                     }
@@ -161,7 +170,11 @@ fun PantallaInicio(
                 onClick = { navController.navigate("agregarTarea") },
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(50.dp)
+                    .height(50.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF1976D2),
+                    contentColor = Color.White
+                )
             ) {
                 Text("Agregar nueva tarea", fontSize = 18.sp)
             }

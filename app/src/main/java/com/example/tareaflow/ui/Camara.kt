@@ -11,9 +11,11 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -81,10 +83,18 @@ fun Camara(
         }
     }
 
-    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-        TextButton(onClick = {
-            cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
-        }) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.Start
+    ) {
+        TextButton(
+            onClick = {
+                cameraPermissionLauncher.launch(Manifest.permission.CAMERA)
+            },
+            colors = ButtonDefaults.textButtonColors(
+                contentColor = Color(0xFF1976D2)
+            )
+        ) {
             Text("Tomar Foto")
         }
 

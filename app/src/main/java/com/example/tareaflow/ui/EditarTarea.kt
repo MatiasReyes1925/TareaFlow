@@ -92,6 +92,7 @@ fun EditarTarea(
                 onFotoTomada = { nuevaFoto -> fotoEditada = nuevaFoto }
             )
 
+            Spacer(modifier = Modifier.height(24.dp))
 
             Button(
                 onClick = {
@@ -111,13 +112,31 @@ fun EditarTarea(
                         navController.navigate("pantallaInicio")
                     }
                 },
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF1976D2),
+                    contentColor = Color.White
+                )
             ) {
-                Text("Guardar cambios")
+                Text("Guardar cambios", fontSize = 18.sp)
             }
 
-            TextButton(onClick = { navController.navigate("pantallaInicio") }) {
-                Text("Volver")
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                TextButton(
+                    onClick = { navController.navigate("pantallaInicio") },
+                    colors = ButtonDefaults.textButtonColors(
+                        contentColor = Color(0xFF1976D2)
+                    )
+                ) {
+                    Text("Volver", fontSize = 16.sp)
+                }
             }
         }
     }

@@ -61,11 +61,16 @@ fun PanTareaCompletada(
                             Text(text = tarea.detalle, fontSize = 14.sp)
                             Text(text = "Estado: ${tarea.estado}", fontSize = 14.sp)
                         }
-                        IconButton(onClick = {
-                            scope.launch {
-                                tareaViewModel.eliminarTarea(tarea)
-                            }
-                        }) {
+                        IconButton(
+                            onClick = {
+                                scope.launch {
+                                    tareaViewModel.eliminarTarea(tarea)
+                                }
+                            },
+                            colors = IconButtonDefaults.iconButtonColors(
+                                contentColor = Color.Red
+                            )
+                        ) {
                             Text("❌", fontSize = 20.sp)
                         }
                     }
@@ -79,7 +84,11 @@ fun PanTareaCompletada(
             onClick = { navController.navigate("pantallaInicio") },
             modifier = Modifier
                 .fillMaxWidth()
-                .height(50.dp)
+                .height(50.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFF1976D2),
+                contentColor = Color.White
+            )
         ) {
             Text("Volver", fontSize = 18.sp)
         }

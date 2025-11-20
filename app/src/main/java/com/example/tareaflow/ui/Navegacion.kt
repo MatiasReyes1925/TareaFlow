@@ -10,26 +10,21 @@ import com.example.tareaflow.viewmodel.TareaViewModel
 @Composable
 fun Navegacion(usuarioViewModel: UsuarioViewModel, tareaViewModel: TareaViewModel) {
     val navController = rememberNavController()
-
     NavHost(navController = navController, startDestination = "pantallaPrincipal") {
         composable("pantallaPrincipal") { PantallaPrincipal(navController) }
         composable("iniciarSesion") { IniciarSesion(navController, usuarioViewModel, tareaViewModel) }
-        composable("registro") { Registro(navController, usuarioViewModel) }
+        composable("registro") { PantallaRegistro(navController, usuarioViewModel) }
         composable("pantallaInicio") { PantallaInicio(navController, usuarioViewModel, tareaViewModel) }
-        composable("agregarTarea") {
-            AgregarTarea(
-                navController = navController,
-                tareaViewModel = tareaViewModel,
-                usuarioViewModel = usuarioViewModel
-            )
-        }
+        composable("agregarTarea") { AgregarTarea(navController, tareaViewModel, usuarioViewModel) }
         composable("editarTarea/{id}") { backStackEntry ->
             val id = backStackEntry.arguments?.getString("id")?.toIntOrNull()
-            if (id != null) {
-                EditarTarea(id, navController, tareaViewModel)
-            }
+            if (id != null) EditarTarea(id, navController, tareaViewModel)
         }
         composable("pantallaCompletadas") { PanTareaCompletada(navController, usuarioViewModel, tareaViewModel) }
         composable("pantallaPerfil") { PantallaPerfil(navController, usuarioViewModel) }
+        composable("verTarea/{id}") { backStackEntry ->
+            val id = backStackEntry.arguments?.getString("id")?.toIntOrNull()
+            if (id != null) PantallaVerTarea(navController, id, tareaViewModel)
+        }
     }
 }

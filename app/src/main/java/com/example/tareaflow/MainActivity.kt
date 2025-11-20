@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import com.example.tareaflow.database.AppDatabase
+import com.example.tareaflow.model.TareaDao
 import com.example.tareaflow.repository.TareaRepository
 import com.example.tareaflow.repository.UsuarioRepository
 import com.example.tareaflow.ui.Navegacion

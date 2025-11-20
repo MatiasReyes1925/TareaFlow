@@ -13,7 +13,6 @@ class UsuarioRepository(private val dao: UsuarioDao) {
             false
         }
     }
-
     suspend fun obtenerPorCorreo(correo: String): Usuario? {
         return dao.obtenerPorCorreo(correo)
     }
