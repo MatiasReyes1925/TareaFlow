@@ -3,6 +3,7 @@ package com.example.tareaflow
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import com.example.tareaflow.database.AppDatabase
@@ -27,6 +28,11 @@ class MainActivity : ComponentActivity() {
 
                 val usuarioViewModel = remember { UsuarioViewModel(usuarioRepository) }
                 val tareaViewModel = remember { TareaViewModel(tareaRepository) }
+                
+                // Inicializar contexto en TareaViewModel
+                LaunchedEffect(Unit) {
+                    tareaViewModel.setContext(context)
+                }
 
                 Navegacion(usuarioViewModel, tareaViewModel)
             }

@@ -107,7 +107,8 @@ fun EditarTarea(
                             tareaOriginal = it,
                             nuevoTitulo = nuevoTitulo,
                             nuevaCategoria = categoriaFinal,
-                            nuevoDetalle = nuevoDetalle
+                            nuevoDetalle = nuevoDetalle,
+                            foto = fotoEditada
                         )
                         navController.navigate("pantallaInicio")
                     }

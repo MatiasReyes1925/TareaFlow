@@ -53,16 +53,35 @@ fun PantallaInicio(
         ) {
             Spacer(modifier = Modifier.height(35.dp))
 
+            // --- Barra superior con menú a la izquierda y perfil fijo a la derecha ---
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 4.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                IconButton(onClick = { menuExpandido = true }) {
-                    Icon(Icons.Default.Menu, contentDescription = "Menú de tareas")
+                // Menú a la izquierda
+                Box {
+                    IconButton(onClick = { menuExpandido = true }) {
+                        Icon(Icons.Default.Menu, contentDescription = "Menú de tareas")
+                    }
+                    DropdownMenu(
+                        expanded = menuExpandido,
+                        onDismissRequest = { menuExpandido = false }
+                    ) {
+                        DropdownMenuItem(
+                            text = { Text("Ver tareas completadas") },
+                            onClick = {
+                                menuExpandido = false
+                                navController.navigate("pantallaCompletadas")
+                            }
+                        )
+                    }
                 }
+
+                Spacer(modifier = Modifier.weight(1f)) // empuja el perfil a la derecha
+
+                // Logo de perfil fijo
                 IconButton(onClick = { navController.navigate("pantallaPerfil") }) {
                     Image(
                         painter = painterResource(id = R.drawable.logousuario),
@@ -70,21 +89,9 @@ fun PantallaInicio(
                         modifier = Modifier.size(30.dp)
                     )
                 }
-
-                DropdownMenu(
-                    expanded = menuExpandido,
-                    onDismissRequest = { menuExpandido = false }
-                ) {
-                    DropdownMenuItem(
-                        text = { Text("Ver tareas completadas") },
-                        onClick = {
-                            menuExpandido = false
-                            navController.navigate("pantallaCompletadas")
-                        }
-                    )
-                }
             }
 
+            // Logo central
             Image(
                 painter = painterResource(id = R.drawable.logotareaflow),
                 contentDescription = "Logo de TareaFlow",

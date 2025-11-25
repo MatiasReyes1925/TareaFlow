@@ -1,5 +1,4 @@
 package com.example.tareaflow.ui
-
 import android.graphics.Bitmap
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
@@ -112,7 +111,8 @@ fun AgregarTarea(
                                 titulo = titulo,
                                 detalle = descripcion,
                                 categoria = categoriaFinal,
-                                idUsuario = idUsuario
+                                idUsuario = idUsuario,
+                                foto = fotoTarea
                             )
                             // Navegar y limpiar el backstack
                             navController.navigate("pantallaInicio") {
