@@ -57,9 +57,14 @@ dependencies {
     implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.androidx.navigation.compose)
+    
+    // --- ViewModel & Lifecycle ---
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.1")
 
     // --- Room (persistencia interna) ---
     implementation(libs.androidx.room.ktx)
+    implementation(libs.androidx.benchmark.common)
     ksp(libs.androidx.room.compiler)
 
     // --- Extras ---
@@ -75,6 +80,13 @@ dependencies {
 
     // --- Coil (mostrar imágenes en Compose) ---
     implementation("io.coil-kt:coil-compose:2.4.0")
+
+    // --- Retrofit + Gson (para consumir Xano) ---
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    // --- Coroutines (para llamadas asíncronas en ViewModel) ---
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
 
     // --- Testing ---
     testImplementation(libs.junit)

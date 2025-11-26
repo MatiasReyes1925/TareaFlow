@@ -53,14 +53,12 @@ fun PantallaInicio(
         ) {
             Spacer(modifier = Modifier.height(35.dp))
 
-            // --- Barra superior con menú a la izquierda y perfil fijo a la derecha ---
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 4.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                // Menú a la izquierda
                 Box {
                     IconButton(onClick = { menuExpandido = true }) {
                         Icon(Icons.Default.Menu, contentDescription = "Menú de tareas")
@@ -81,7 +79,6 @@ fun PantallaInicio(
 
                 Spacer(modifier = Modifier.weight(1f)) // empuja el perfil a la derecha
 
-                // Logo de perfil fijo
                 IconButton(onClick = { navController.navigate("pantallaPerfil") }) {
                     Image(
                         painter = painterResource(id = R.drawable.logousuario),
@@ -91,7 +88,6 @@ fun PantallaInicio(
                 }
             }
 
-            // Logo central
             Image(
                 painter = painterResource(id = R.drawable.logotareaflow),
                 contentDescription = "Logo de TareaFlow",
@@ -184,6 +180,21 @@ fun PantallaInicio(
                 )
             ) {
                 Text("Agregar nueva tarea", fontSize = 18.sp)
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                onClick = { navController.navigate("pantallaPosts") },
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(50.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF388E3C),
+                    contentColor = Color.White
+                )
+            ) {
+                Text("Ver Posts (Xano)", fontSize = 18.sp)
             }
         }
     }

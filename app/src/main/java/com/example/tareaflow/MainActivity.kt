@@ -7,13 +7,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import com.example.tareaflow.database.AppDatabase
-import com.example.tareaflow.model.TareaDao
 import com.example.tareaflow.repository.TareaRepository
 import com.example.tareaflow.repository.UsuarioRepository
 import com.example.tareaflow.ui.Navegacion
 import com.example.tareaflow.ui.theme.TareaFlowTheme
 import com.example.tareaflow.viewmodel.TareaViewModel
 import com.example.tareaflow.viewmodel.UsuarioViewModel
+import com.example.tareaflow.viewmodel.PostViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,13 +28,13 @@ class MainActivity : ComponentActivity() {
 
                 val usuarioViewModel = remember { UsuarioViewModel(usuarioRepository) }
                 val tareaViewModel = remember { TareaViewModel(tareaRepository) }
-                
-                // Inicializar contexto en TareaViewModel
+                val postViewModel = remember { PostViewModel() }
+
                 LaunchedEffect(Unit) {
                     tareaViewModel.setContext(context)
                 }
 
-                Navegacion(usuarioViewModel, tareaViewModel)
+                Navegacion(usuarioViewModel, tareaViewModel, postViewModel)
             }
         }
     }

@@ -6,9 +6,14 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.tareaflow.viewmodel.UsuarioViewModel
 import com.example.tareaflow.viewmodel.TareaViewModel
+import com.example.tareaflow.viewmodel.PostViewModel
 
 @Composable
-fun Navegacion(usuarioViewModel: UsuarioViewModel, tareaViewModel: TareaViewModel) {
+fun Navegacion(
+    usuarioViewModel: UsuarioViewModel,
+    tareaViewModel: TareaViewModel,
+    postViewModel: PostViewModel
+) {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "pantallaPrincipal") {
         composable("pantallaPrincipal") { PantallaPrincipal(navController) }
@@ -26,6 +31,8 @@ fun Navegacion(usuarioViewModel: UsuarioViewModel, tareaViewModel: TareaViewMode
             val id = backStackEntry.arguments?.getString("id")?.toIntOrNull()
             if (id != null) PantallaVerTarea(navController, id, tareaViewModel)
         }
+        composable("pantallaPosts") {
+            PantallaPost(navController, viewModel = postViewModel)
+        }
     }
 }
-
