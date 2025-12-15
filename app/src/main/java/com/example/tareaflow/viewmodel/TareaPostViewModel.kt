@@ -2,15 +2,15 @@ package com.example.tareaflow.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.tareaflow.model.Post
-import com.example.tareaflow.repository.PostRepository
+import com.example.tareaflow.model.TareaPost
+import com.example.tareaflow.repository.TareaPostRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class PostViewModel(private val repository: PostRepository = PostRepository()) : ViewModel() {
-    private val _posts = MutableStateFlow<UiState<List<Post>>>(UiState.Loading)
-    val posts: StateFlow<UiState<List<Post>>> = _posts
+class PostViewModel(private val repository: TareaPostRepository = TareaPostRepository()) : ViewModel() {
+    private val _posts = MutableStateFlow<UiState<List<TareaPost>>>(UiState.Loading)
+    val posts: StateFlow<UiState<List<TareaPost>>> = _posts
     
     private var postsLoaded = false
 
@@ -29,7 +29,7 @@ class PostViewModel(private val repository: PostRepository = PostRepository()) :
         }
     }
 
-    fun updatePost(id: Int, post: Post) {
+    fun updatePost(id: Int, post: TareaPost) {
         viewModelScope.launch {
             try {
                 repository.updatePost(id, post)

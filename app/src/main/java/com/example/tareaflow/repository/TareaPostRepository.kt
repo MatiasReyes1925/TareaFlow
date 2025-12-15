@@ -1,18 +1,18 @@
 package com.example.tareaflow.repository
 
-import com.example.tareaflow.model.Post
+import com.example.tareaflow.model.TareaPost
 import com.example.tareaflow.remote.RetrofitInstance
 
-class PostRepository {
-    suspend fun getPosts(): List<Post> {
+class TareaPostRepository {
+    suspend fun getPosts(): List<TareaPost> {
         return RetrofitInstance.api.getPosts()
     }
 
-    suspend fun createPost(post: Post): Post {
+    suspend fun createPost(post: TareaPost): TareaPost {
         return RetrofitInstance.api.createPost(post)
     }
 
-    suspend fun updatePost(id: Int, post: Post): Post {
+    suspend fun updatePost(id: Int, post: TareaPost): TareaPost {
         return RetrofitInstance.api.updatePost(id, post)
     }
 

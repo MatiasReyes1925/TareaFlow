@@ -65,6 +65,7 @@ dependencies {
     // --- Room (persistencia interna) ---
     implementation(libs.androidx.room.ktx)
     implementation(libs.androidx.benchmark.common)
+    implementation(libs.ui.graphics)
     ksp(libs.androidx.room.compiler)
 
     // --- Extras ---

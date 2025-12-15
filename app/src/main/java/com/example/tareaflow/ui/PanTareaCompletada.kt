@@ -1,8 +1,10 @@
 package com.example.tareaflow.ui
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -12,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.tareaflow.model.EstadoTarea
+import com.example.tareaflow.utils.ColorUtils
 import com.example.tareaflow.viewmodel.TareaViewModel
 import com.example.tareaflow.viewmodel.UsuarioViewModel
 import kotlinx.coroutines.launch
@@ -47,7 +50,7 @@ fun PanTareaCompletada(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 4.dp),
-                    colors = CardDefaults.cardColors(containerColor = Color.LightGray)
+                    colors = CardDefaults.cardColors(containerColor = Color(0xFFF5F5F5))
                 ) {
                     Row(
                         modifier = Modifier
@@ -55,9 +58,22 @@ fun PanTareaCompletada(
                             .padding(16.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
+                        Box(
+                            modifier = Modifier
+                                .size(12.dp)
+                                .background(
+                                    color = ColorUtils.getCategoryColor(tarea.categoria),
+                                    shape = RoundedCornerShape(6.dp)
+                                )
+                        )
+                        Spacer(modifier = Modifier.width(12.dp))
                         Column(modifier = Modifier.weight(1f)) {
                             Text(text = tarea.titulo, fontSize = 16.sp)
-                            Text(text = "Categoría: ${tarea.categoria}", fontSize = 14.sp)
+                            Text(
+                                text = "Categoría: ${tarea.categoria}",
+                                fontSize = 14.sp,
+                                color = ColorUtils.getCategoryColor(tarea.categoria)
+                            )
                             Text(text = tarea.detalle, fontSize = 14.sp)
                             Text(text = "Estado: ${tarea.estado}", fontSize = 14.sp)
                         }

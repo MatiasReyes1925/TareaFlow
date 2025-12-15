@@ -1,5 +1,7 @@
 package com.example.tareaflow.ui
+
 import android.graphics.Bitmap
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -14,6 +16,7 @@ import com.example.tareaflow.viewmodel.TareaViewModel
 import com.example.tareaflow.viewmodel.UsuarioViewModel
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AgregarTarea(
     navController: NavController,
@@ -23,9 +26,13 @@ fun AgregarTarea(
     var titulo by remember { mutableStateOf("") }
     var descripcion by remember { mutableStateOf("") }
 
-    val categorias = listOf("Estudio", "Trabajo", "Personal", "Otros")
-    var categoriaSeleccionada by remember { mutableStateOf("Estudio") }
+    val categorias = listOf(
+        "Trabajo", "Personal", "Estudio", "Salud", "Finanzas",
+        "Hogar", "Deporte", "Viajes", "Compras", "Otros"
+    )
+    var categoriaSeleccionada by remember { mutableStateOf(categorias.first()) }
     var categoriaPersonalizada by remember { mutableStateOf("") }
+    var expanded by remember { mutableStateOf(false) }
 
     var fotoTarea by remember { mutableStateOf<Bitmap?>(null) }
 
@@ -53,17 +60,35 @@ fun AgregarTarea(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text("Categoría", fontSize = 16.sp, modifier = Modifier.align(Alignment.Start))
-        categorias.forEach { categoria ->
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.align(Alignment.Start)
+        ExposedDropdownMenuBox(
+            expanded = expanded,
+            onExpandedChange = { expanded = !expanded }
+        ) {
+            OutlinedTextField(
+                value = categoriaSeleccionada,
+                onValueChange = {},
+                readOnly = true,
+                label = { Text("Categoría", color = Color.Black) },
+                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
+                textStyle = TextStyle(fontSize = 16.sp, color = Color.Black),
+                modifier = Modifier
+                    .menuAnchor()
+                    .fillMaxWidth()
+            )
+            ExposedDropdownMenu(
+                expanded = expanded,
+                onDismissRequest = { expanded = false },
+                modifier = Modifier.background(Color.White)
             ) {
-                RadioButton(
-                    selected = categoriaSeleccionada == categoria,
-                    onClick = { categoriaSeleccionada = categoria }
-                )
-                Text(categoria)
+                categorias.forEach { categoria ->
+                    DropdownMenuItem(
+                        text = { Text(categoria, color = Color.Black) },
+                        onClick = {
+                            categoriaSeleccionada = categoria
+                            expanded = false
+                        }
+                    )
+                }
             }
         }
 
@@ -96,7 +121,6 @@ fun AgregarTarea(
             onFotoTomada = { nuevaFoto -> fotoTarea = nuevaFoto }
         )
 
-
         Button(
             onClick = {
                 if (titulo.isNotBlank()) {
@@ -114,9 +138,8 @@ fun AgregarTarea(
                                 idUsuario = idUsuario,
                                 foto = fotoTarea
                             )
-                            // Navegar y limpiar el backstack
                             navController.navigate("pantallaInicio") {
-                                popUpTo("pantallaInicio") { inclusive = true }
+                                popUpTo(navController.graph.startDestinationId) { inclusive = false }
                                 launchSingleTop = true
                             }
                         }
@@ -133,7 +156,12 @@ fun AgregarTarea(
         }
 
         TextButton(
-            onClick = { navController.navigate("pantallaInicio") },
+            onClick = {
+                navController.navigate("pantallaInicio") {
+                    popUpTo(navController.graph.startDestinationId) { inclusive = false }
+                    launchSingleTop = true
+                }
+            },
             modifier = Modifier.align(Alignment.CenterHorizontally),
             colors = ButtonDefaults.textButtonColors(
                 contentColor = Color(0xFF1976D2)

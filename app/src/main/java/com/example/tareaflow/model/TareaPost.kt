@@ -1,6 +1,6 @@
 package com.example.tareaflow.model
 
-data class Post(
+data class TareaPost(
     val id: Int? = null,
     val date: String = "",
     val name: String = "",

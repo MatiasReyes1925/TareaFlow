@@ -7,12 +7,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.tareaflow.model.EstadoTarea
 import com.example.tareaflow.model.Tarea
+import com.example.tareaflow.remote.RetrofitInstance
 import com.example.tareaflow.repository.TareaRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
-import java.util.*
 
 class TareaViewModel(private val repository: TareaRepository) : ViewModel() {
     val tareas = mutableStateListOf<Tarea>()
@@ -26,6 +26,27 @@ class TareaViewModel(private val repository: TareaRepository) : ViewModel() {
         viewModelScope.launch {
             tareas.clear()
             tareas.addAll(repository.obtenerTareas(idUsuario))
+        }
+    }
+
+    fun cargarDesdeXano() {
+        viewModelScope.launch {
+            try {
+                val remotas = RetrofitInstance.api.getPosts()
+                tareas.clear()
+                tareas.addAll(remotas.map {
+                    Tarea(
+                        titulo = it.title,
+                        detalle = it.description,
+                        categoria = it.category,
+                        idUsuario = 0,
+                        estado = EstadoTarea.PENDIENTE,
+                        fotoUri = null
+                    )
+                })
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 
@@ -98,4 +119,3 @@ class TareaViewModel(private val repository: TareaRepository) : ViewModel() {
         cargarTareas(tarea.idUsuario)
     }
 }
-

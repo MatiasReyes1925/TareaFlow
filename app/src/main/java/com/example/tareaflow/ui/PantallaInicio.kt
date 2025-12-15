@@ -1,9 +1,11 @@
 package com.example.tareaflow.ui
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
@@ -18,6 +20,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.tareaflow.R
 import com.example.tareaflow.model.EstadoTarea
+import com.example.tareaflow.utils.ColorUtils
 import com.example.tareaflow.viewmodel.TareaViewModel
 import com.example.tareaflow.viewmodel.UsuarioViewModel
 import kotlinx.coroutines.launch
@@ -74,10 +77,17 @@ fun PantallaInicio(
                                 navController.navigate("pantallaCompletadas")
                             }
                         )
+                        DropdownMenuItem(
+                            text = { Text("Ver todas las tareas") },
+                            onClick = {
+                                menuExpandido = false
+                                navController.navigate("pantallaTodasTareas")
+                            }
+                        )
                     }
                 }
 
-                Spacer(modifier = Modifier.weight(1f)) // empuja el perfil a la derecha
+                Spacer(modifier = Modifier.weight(1f))
 
                 IconButton(onClick = { navController.navigate("pantallaPerfil") }) {
                     Image(
@@ -110,57 +120,75 @@ fun PantallaInicio(
                             .padding(vertical = 4.dp),
                         colors = CardDefaults.cardColors(containerColor = Color(0xFFF5F5F5))
                     ) {
-                        Column(modifier = Modifier.padding(16.dp)) {
-                            Text(text = tarea.titulo, fontSize = 16.sp)
-                            Text(text = "Categoría: ${tarea.categoria}", fontSize = 14.sp)
-                            Text(text = tarea.detalle, fontSize = 14.sp)
-                            Text(text = "Estado: ${tarea.estado}", fontSize = 14.sp)
-
-                            Spacer(modifier = Modifier.height(8.dp))
-
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceEvenly
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Box(
+                                modifier = Modifier
+                                    .size(12.dp)
+                                    .background(
+                                        color = ColorUtils.getCategoryColor(tarea.categoria),
+                                        shape = RoundedCornerShape(6.dp)
+                                    )
+                            )
+                            Spacer(modifier = Modifier.width(12.dp))
+                            Column(modifier = Modifier.weight(1f)) {
+                                Text(text = tarea.titulo, fontSize = 16.sp)
+                                Text(
+                                    text = "Categoría: ${tarea.categoria}",
+                                    fontSize = 14.sp,
+                                    color = ColorUtils.getCategoryColor(tarea.categoria)
+                                )
+                                Text(text = tarea.detalle, fontSize = 14.sp)
+                                Text(text = "Estado: ${tarea.estado}", fontSize = 14.sp)
+                            }
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp),
+                            horizontalArrangement = Arrangement.SpaceEvenly
+                        ) {
+                            IconButton(
+                                onClick = {
+                                    scope.launch {
+                                        // 👇 Solo se marca como completada, sin navegar
+                                        tareaViewModel.marcarComoCompletada(tarea)
+                                    }
+                                },
+                                modifier = Modifier.size(36.dp)
                             ) {
-                                IconButton(
-                                    onClick = {
-                                        scope.launch {
-                                            tareaViewModel.marcarComoCompletada(tarea)
-                                        }
-                                    },
-                                    modifier = Modifier.size(36.dp)
-                                ) {
-                                    Text("✔️", fontSize = 20.sp)
-                                }
-
-                                IconButton(
-                                    onClick = {
-                                        navController.navigate("editarTarea/${tarea.id}")
-                                    },
-                                    modifier = Modifier.size(36.dp)
-                                ) {
-                                    Text("✏️", fontSize = 20.sp)
-                                }
-
-                                IconButton(
-                                    onClick = {
-                                        scope.launch {
-                                            tareaViewModel.eliminarTarea(tarea)
-                                        }
-                                    },
-                                    modifier = Modifier.size(36.dp)
-                                ) {
-                                    Text("❌", fontSize = 20.sp)
-                                }
-
-                                IconButton(
-                                    onClick = {
-                                        navController.navigate("verTarea/${tarea.id}")
-                                    },
-                                    modifier = Modifier.size(36.dp)
-                                ) {
-                                    Text("👁️", fontSize = 20.sp)
-                                }
+                                Text("✔️", fontSize = 20.sp)
+                            }
+                            IconButton(
+                                onClick = {
+                                    navController.navigate("editarTarea/${tarea.id}")
+                                },
+                                modifier = Modifier.size(36.dp)
+                            ) {
+                                Text("✏️", fontSize = 20.sp)
+                            }
+                            IconButton(
+                                onClick = {
+                                    scope.launch {
+                                        tareaViewModel.eliminarTarea(tarea)
+                                    }
+                                },
+                                modifier = Modifier.size(36.dp)
+                            ) {
+                                Text("❌", fontSize = 20.sp)
+                            }
+                            IconButton(
+                                onClick = {
+                                    navController.navigate("verTarea/${tarea.id}")
+                                },
+                                modifier = Modifier.size(36.dp)
+                            ) {
+                                Text("👁️", fontSize = 20.sp)
                             }
                         }
                     }
@@ -180,21 +208,6 @@ fun PantallaInicio(
                 )
             ) {
                 Text("Agregar nueva tarea", fontSize = 18.sp)
-            }
-
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Button(
-                onClick = { navController.navigate("pantallaPosts") },
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(50.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF388E3C),
-                    contentColor = Color.White
-                )
-            ) {
-                Text("Ver Posts (Xano)", fontSize = 18.sp)
             }
         }
     }

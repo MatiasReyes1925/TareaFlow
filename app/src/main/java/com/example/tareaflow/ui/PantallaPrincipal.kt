@@ -20,24 +20,25 @@ fun PantallaPrincipal(navController: NavController) {
         modifier = Modifier
             .fillMaxSize()
             .padding(horizontal = 24.dp),
-        verticalArrangement = Arrangement.Top,
+        verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Spacer(modifier = Modifier.height(48.dp))
-
+        Spacer(modifier = Modifier.height(40.dp))
+        
         Image(
             painter = painterResource(id = R.drawable.logotareaflow),
             contentDescription = "Logo de TareaFlow",
-            modifier = Modifier.size(400.dp)
+            modifier = Modifier.size(300.dp)
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
         Text(
             text = "Bienvenidos a TareaFlow",
             fontSize = 40.sp,
             fontFamily = FontFamily.Cursive
         )
+        
         Spacer(modifier = Modifier.height(20.dp))
 
         Button(
@@ -58,7 +59,7 @@ fun PantallaPrincipal(navController: NavController) {
             horizontalArrangement = Arrangement.Center,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("¿No tienes cuenta?", fontSize = 16.sp)
+            Text("¿No tienes cuenta?", fontSize = 14.sp)
             Spacer(modifier = Modifier.width(4.dp))
             TextButton(
                 onClick = { navController.navigate("registro") },
@@ -66,7 +67,7 @@ fun PantallaPrincipal(navController: NavController) {
                     contentColor = Color(0xFF1976D2)
                 )
             ) {
-                Text("Regístrate aquí", fontSize = 16.sp)
+                Text("Regístrate aquí", fontSize = 14.sp)
             }
         }
     }

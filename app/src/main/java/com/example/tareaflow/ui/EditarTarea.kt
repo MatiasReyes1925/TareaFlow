@@ -1,6 +1,7 @@
 package com.example.tareaflow.ui
 
 import android.graphics.Bitmap
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -14,6 +15,7 @@ import androidx.navigation.NavController
 import com.example.tareaflow.viewmodel.TareaViewModel
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditarTarea(
     tareaId: Int,
@@ -27,10 +29,14 @@ fun EditarTarea(
         var nuevoTitulo by remember { mutableStateOf(it.titulo) }
         var nuevoDetalle by remember { mutableStateOf(it.detalle) }
 
-        val categorias = listOf("Estudio", "Trabajo", "Personal", "Otros")
+        val categorias = listOf(
+            "Trabajo", "Personal", "Estudio", "Salud", "Finanzas",
+            "Hogar", "Deporte", "Viajes", "Compras", "Otros"
+        )
         val esCategoriaPersonalizada = it.categoria !in categorias
         var categoriaSeleccionada by remember { mutableStateOf(if (esCategoriaPersonalizada) "Otros" else it.categoria) }
         var categoriaPersonalizada by remember { mutableStateOf(if (esCategoriaPersonalizada) it.categoria else "") }
+        var expanded by remember { mutableStateOf(false) }
 
         var fotoEditada by remember { mutableStateOf<Bitmap?>(null) }
 
@@ -53,14 +59,36 @@ fun EditarTarea(
             )
 
             Spacer(modifier = Modifier.height(16.dp))
-            Text("Categoría", fontSize = 16.sp)
-            categorias.forEach { categoria ->
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    RadioButton(
-                        selected = categoriaSeleccionada == categoria,
-                        onClick = { categoriaSeleccionada = categoria }
-                    )
-                    Text(categoria)
+
+            ExposedDropdownMenuBox(
+                expanded = expanded,
+                onExpandedChange = { expanded = !expanded }
+            ) {
+                OutlinedTextField(
+                    value = categoriaSeleccionada,
+                    onValueChange = {},
+                    readOnly = true,
+                    label = { Text("Categoría", color = Color.Black) },
+                    trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) },
+                    textStyle = TextStyle(fontSize = 16.sp, color = Color.Black),
+                    modifier = Modifier
+                        .menuAnchor()
+                        .fillMaxWidth()
+                )
+                ExposedDropdownMenu(
+                    expanded = expanded,
+                    onDismissRequest = { expanded = false },
+                    modifier = Modifier.background(Color.White)
+                ) {
+                    categorias.forEach { categoria ->
+                        DropdownMenuItem(
+                            text = { Text(categoria, color = Color.Black) },
+                            onClick = {
+                                categoriaSeleccionada = categoria
+                                expanded = false
+                            }
+                        )
+                    }
                 }
             }
 
@@ -110,7 +138,10 @@ fun EditarTarea(
                             nuevoDetalle = nuevoDetalle,
                             foto = fotoEditada
                         )
-                        navController.navigate("pantallaInicio")
+                        navController.navigate("pantallaInicio") {
+                            popUpTo(navController.graph.startDestinationId) { inclusive = false }
+                            launchSingleTop = true
+                        }
                     }
                 },
                 modifier = Modifier
@@ -131,7 +162,12 @@ fun EditarTarea(
                 horizontalArrangement = Arrangement.Center
             ) {
                 TextButton(
-                    onClick = { navController.navigate("pantallaInicio") },
+                    onClick = {
+                        navController.navigate("pantallaInicio") {
+                            popUpTo(navController.graph.startDestinationId) { inclusive = false }
+                            launchSingleTop = true
+                        }
+                    },
                     colors = ButtonDefaults.textButtonColors(
                         contentColor = Color(0xFF1976D2)
                     )

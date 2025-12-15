@@ -17,9 +17,9 @@ fun Navegacion(
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = "pantallaPrincipal") {
         composable("pantallaPrincipal") { PantallaPrincipal(navController) }
+        composable("pantallaInicio") { PantallaInicio(navController, usuarioViewModel, tareaViewModel) }
         composable("iniciarSesion") { IniciarSesion(navController, usuarioViewModel, tareaViewModel) }
         composable("registro") { PantallaRegistro(navController, usuarioViewModel) }
-        composable("pantallaInicio") { PantallaInicio(navController, usuarioViewModel, tareaViewModel) }
         composable("agregarTarea") { AgregarTarea(navController, tareaViewModel, usuarioViewModel) }
         composable("editarTarea/{id}") { backStackEntry ->
             val id = backStackEntry.arguments?.getString("id")?.toIntOrNull()
@@ -31,8 +31,8 @@ fun Navegacion(
             val id = backStackEntry.arguments?.getString("id")?.toIntOrNull()
             if (id != null) PantallaVerTarea(navController, id, tareaViewModel)
         }
-        composable("pantallaPosts") {
-            PantallaPost(navController, viewModel = postViewModel)
+        composable("pantallaTodasTareas") {
+            PantallaTodasTareas(navController, tareaViewModel)
         }
     }
 }
