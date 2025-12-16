@@ -4,7 +4,7 @@ import com.example.tareaflow.model.TareaPost
 import retrofit2.http.*
 
 
-interface ApiService {
+interface TareaApi {
     @GET("task")
     suspend fun getPosts(): List<TareaPost>
 
